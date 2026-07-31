@@ -1,8 +1,14 @@
--- | The baseline application. It deliberately has no git dependencies so that
--- phase 0 of the walkthrough is a pure toolchain check.
+-- | The demo application.
+--
+-- `greeting` is not defined anywhere in this repository. It comes from a DAR
+-- that lives in another git repository, declared as a single line under
+-- `data-dependencies` in daml.yaml. That one line is the whole point of this
+-- demo: no vendored .dar file, no registry, no manual download step.
 module Main where
 
 import Daml.Script
+
+import Hello (greeting)
 
 template Greeting
   with
@@ -20,8 +26,9 @@ template Greeting
       do
         create this with message = newMessage
 
+-- | Built from text that came out of the git-hosted DAR.
 baselineMessage : Text
-baselineMessage = "hello from dpm-git-links-demo"
+baselineMessage = greeting <> " from dpm-git-links-demo"
 
 setup : Script (Party, ContractId Greeting)
 setup = do
