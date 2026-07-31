@@ -1,0 +1,25 @@
+# GitHub "raw" browser URL, pointing at a release tag
+#
+# What it shows: you can copy a DAR's URL straight out of your browser's
+# address bar and hand it to `dpm add dar`. DPM rewrites it into the canonical
+# `git:` form for you.
+#
+# Reach for it when: you found the DAR by clicking around GitHub and do not
+# want to hand-assemble a `git:` line.
+#
+# Run this:
+#
+#   dpm add dar \
+#     'https://github.com/canton-network/splice/raw/refs/tags/0.6.10/daml/dars/splice-amulet-0.1.19.dar' \
+#     --data-dependencies
+#
+# DPM printed:
+#
+#   Resolving git dependency: fetching https://github.com/canton-network/splice @ "0.6.10" path "daml/dars/splice-amulet-0.1.19.dar"
+#   Successfully installed and added dar "git:github.com/canton-network/splice#63cfb340ce0f8f254386d2d5df58905d695de902?path=daml%2Fdars%2Fsplice-amulet-0.1.19.dar"
+#
+# and left this in daml.yaml. Note the tag `0.6.10` became a commit SHA: tags
+# can be moved, commits cannot, so DPM pins what the tag pointed at.
+
+data-dependencies:
+  - "git:github.com/canton-network/splice#63cfb340ce0f8f254386d2d5df58905d695de902?path=daml%2Fdars%2Fsplice-amulet-0.1.19.dar"

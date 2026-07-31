@@ -1,0 +1,28 @@
+# A GitHub release with no asset named: take all of them
+#
+# What it shows: drop `&asset=` and DPM expands the single entry into one line
+# per `.dar` asset attached to that release, writing them all back to daml.yaml.
+#
+# Reach for it when: you want a whole published library set and would rather not
+# type out thirty-five file names.
+#
+# Write this one line:
+#
+#   data-dependencies:
+#     - "git:github.com/Moonsong-Labs/daml-finance.git?release=test-release-0.0.6"
+#
+# `dpm install package` printed:
+#
+#   Resolving git release: listing .dar assets for https://github.com/Moonsong-Labs/daml-finance.git release "test-release-0.0.6"
+#   All 35 git release assets already cached
+#
+# and replaced the line with 35 fully-named entries. The first few:
+
+data-dependencies:
+  - "git:github.com/Moonsong-Labs/daml-finance?release=test-release-0.0.6&asset=contingent-claims-core.dar"
+  - "git:github.com/Moonsong-Labs/daml-finance?release=test-release-0.0.6&asset=contingent-claims-lifecycle.dar"
+  - "git:github.com/Moonsong-Labs/daml-finance?release=test-release-0.0.6&asset=contingent-claims-valuation.dar"
+  - "git:github.com/Moonsong-Labs/daml-finance?release=test-release-0.0.6&asset=daml-finance-account.dar"
+  - "git:github.com/Moonsong-Labs/daml-finance?release=test-release-0.0.6&asset=daml-finance-claims.dar"
+  - "git:github.com/Moonsong-Labs/daml-finance?release=test-release-0.0.6&asset=daml-finance-data.dar"
+  # ... 29 more, one per .dar asset on the release

@@ -1,0 +1,29 @@
+# The structured YAML mapping form
+#
+# What it shows: instead of one packed string, spell the parts out as keys.
+# `url`, `ref` and `path` mean exactly what they mean in the one-liner. `url` is
+# the bare host/repo with no `git:` prefix.
+#
+# Reach for it when: the one-liner is getting long and you would rather read
+# three labelled fields, or you are generating daml.yaml from a template.
+#
+# Write this:
+#
+#   data-dependencies:
+#     - git:
+#         url: github.com/gonzamontiel/test-daml-hello.git
+#         ref: master
+#         path: dist/test-daml-hello-sdk-3.5.2-lf-2.1.dar
+#
+# After `dpm install package` the file looked like the block below: `ref` was
+# pinned in place and the form stayed structured. DPM also wrote back two empty
+# keys, `release: ""` and `asset: ""`, that were not there before. They are
+# harmless and re-reading the file works, but do not be surprised by them.
+
+data-dependencies:
+  - git:
+      url: github.com/gonzamontiel/test-daml-hello
+      ref: 1c7c5d4776cdb6f57139c7f7fe674e137e79c1e2
+      path: dist/test-daml-hello-sdk-3.5.2-lf-2.1.dar
+      release: ""
+      asset: ""

@@ -1,0 +1,23 @@
+# GitHub "blob" browser URL, pointing at a commit SHA
+#
+# What it shows: `blob` URLs work as well as `raw` URLs, and a URL that already
+# names a full 40-character commit SHA passes through untouched. There is
+# nothing left to pin.
+#
+# Reach for it when: you want the most reproducible thing you can write, or you
+# are copying a link someone sent you from a code review.
+#
+# Run this:
+#
+#   dpm add dar \
+#     'https://github.com/canton-network/splice/blob/93b3519c7d50c0e0ddd0fcfa55529537bf6e643c/daml/dars/splice-amulet-0.1.19.dar' \
+#     --data-dependencies
+#
+# DPM printed:
+#
+#   Successfully installed and added dar "git:github.com/canton-network/splice#93b3519c7d50c0e0ddd0fcfa55529537bf6e643c?path=daml%2Fdars%2Fsplice-amulet-0.1.19.dar"
+#
+# The ref in the resulting line is byte-for-byte the SHA from the URL.
+
+data-dependencies:
+  - "git:github.com/canton-network/splice#93b3519c7d50c0e0ddd0fcfa55529537bf6e643c?path=daml%2Fdars%2Fsplice-amulet-0.1.19.dar"

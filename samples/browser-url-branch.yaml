@@ -1,0 +1,25 @@
+# GitHub "raw" browser URL, pointing at a branch
+#
+# What it shows: a branch is resolved to whatever commit it pointed at when you
+# ran the command, and pinned. Run the same command a week later and you get a
+# different SHA, which is exactly the point.
+#
+# Reach for it when: you want to grab the current state of a branch once, then
+# stay on that state until you deliberately update.
+#
+# Run this:
+#
+#   dpm add dar \
+#     'https://github.com/canton-network/splice/raw/refs/heads/main/daml/dars/splice-amulet-0.1.19.dar' \
+#     --data-dependencies
+#
+# If the same DAR from the same repo is already declared, DPM updates that line
+# instead of adding a second one. It said so out loud:
+#
+#   dependency "git:github.com/canton-network/splice#main?path=daml/dars/splice-amulet-0.1.19.dar" already exists in daml.yaml, will be updated...
+#   Successfully installed and added dar "git:github.com/canton-network/splice#e97cdd965945870d78f17e53a554645cbecb189d?path=daml%2Fdars%2Fsplice-amulet-0.1.19.dar"
+#
+# The SHA below is what `main` pointed at on 2026-07-31. Yours will differ.
+
+data-dependencies:
+  - "git:github.com/canton-network/splice#e97cdd965945870d78f17e53a554645cbecb189d?path=daml%2Fdars%2Fsplice-amulet-0.1.19.dar"

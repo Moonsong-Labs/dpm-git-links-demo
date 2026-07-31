@@ -1,0 +1,27 @@
+# The same git: line, under dependencies instead of data-dependencies
+#
+# What it shows: git links work in either field. The syntax is identical and
+# DPM pins the line in whichever field you declared it.
+#
+# Reach for it when: the DAR is a true library built for the same Daml-LF
+# version as your package, and you want it linked in rather than reconstructed
+# from its interface.
+#
+# The catch, which cost real time to find: under `dependencies` the DAR's
+# Daml-LF version must match your build target exactly. The Hello DAR below is
+# LF 2.1, and SDK 3.5.2 targets LF 2.2 by default, so `dpm build` failed with:
+#
+#   Targeted LF version 2.2 but dependencies have different LF versions:
+#   30dba3c15f0f6b478f40761456e0581a74ab503f20243d42db13e1f0b0795057 (test-daml-component-0.0.1): 2.1
+#
+# Adding the matching target fixed it and the build succeeded. Under
+# `data-dependencies` the same DAR needs no build-options at all, which is why
+# `data-dependencies` is the friendlier default for someone else's DAR.
+
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - "git:github.com/gonzamontiel/test-daml-hello#1c7c5d4776cdb6f57139c7f7fe674e137e79c1e2?path=dist%2Ftest-daml-hello-sdk-3.5.2-lf-2.1.dar"
+
+build-options:
+  - --target=2.1

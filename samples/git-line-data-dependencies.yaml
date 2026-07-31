@@ -1,0 +1,19 @@
+# The canonical hand-written git: line, under data-dependencies
+#
+# What it shows: the form everything else normalizes to.
+#
+#   git:<host>/<repo>#<ref>?path=<path/inside/the/repo.dar>
+#
+# `<ref>` is a branch, a tag, or a commit SHA. `?path=` is required and must end
+# in `.dar`. A trailing `.git` on the repo is accepted and then dropped, and
+# `/` in the path may be written plainly or percent-encoded as `%2F` -- DPM
+# writes `%2F` when it rewrites the line.
+#
+# Reach for it when: this is the default. It is what this repo's own daml.yaml
+# uses, and what you should write by hand.
+#
+# Verified: `dpm install package` then `dpm build` then `dpm test`, all green on
+# released SDK 3.5.2.
+
+data-dependencies:
+  - "git:github.com/gonzamontiel/test-daml-hello#1c7c5d4776cdb6f57139c7f7fe674e137e79c1e2?path=dist%2Ftest-daml-hello-sdk-3.5.2-lf-2.1.dar"
