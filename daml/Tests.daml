@@ -1,0 +1,23 @@
+-- | Tests for the baseline application. These must stay green with zero git
+-- dependencies declared, which is what makes any later red attributable to the
+-- git-link feature rather than to the toolchain.
+module Tests where
+
+import DA.Assert ((===))
+import Daml.Script
+
+import Main
+
+testSetup : Script ()
+testSetup = do
+  (alice, cid) <- setup
+  Some greeting <- queryContractId alice cid
+  greeting.message === baselineMessage
+
+testReword : Script ()
+testReword = do
+  (alice, cid) <- setup
+  reworded <- submit alice do
+    exerciseCmd cid Reword with newMessage = "reworded"
+  Some greeting <- queryContractId alice reworded
+  greeting.message === "reworded"

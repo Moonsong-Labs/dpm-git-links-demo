@@ -1,0 +1,31 @@
+-- | The baseline application. It deliberately has no git dependencies so that
+-- phase 0 of the walkthrough is a pure toolchain check.
+module Main where
+
+import Daml.Script
+
+template Greeting
+  with
+    owner : Party
+    message : Text
+  where
+    signatory owner
+
+    ensure message /= ""
+
+    choice Reword : ContractId Greeting
+      with
+        newMessage : Text
+      controller owner
+      do
+        create this with message = newMessage
+
+baselineMessage : Text
+baselineMessage = "hello from dpm-git-links-demo"
+
+setup : Script (Party, ContractId Greeting)
+setup = do
+  alice <- allocateParty "Alice"
+  cid <- submit alice do
+    createCmd Greeting with owner = alice, message = baselineMessage
+  pure (alice, cid)

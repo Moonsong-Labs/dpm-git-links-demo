@@ -1,0 +1,31 @@
+-- | Optional compile probe for the Splice Amulet data-dependency.
+--
+-- This file is NOT part of the default build. Phase 10 of the README copies it
+-- into daml/ on purpose. Keep it out of daml/ otherwise, so that the baseline
+-- build never depends on a large third-party package.
+--
+-- A failure here is a compiler / Daml-LF compatibility result, not a DPM
+-- resolution result. Report it separately. splice-amulet-0.1.19 is built with
+-- SDK 3.4.11; this project builds with 3.5.2.
+--
+-- Both modules below appear in the DAR's exposed-modules list:
+--   Splice.Fees      -> newtype FixedFee = FixedFee with fee : Decimal
+--   Splice.RelRound  -> newtype RelRound = RelRound with diff : Int
+module SpliceProbe where
+
+import Splice.Fees (FixedFee(..))
+import Splice.RelRound (RelRound(..))
+
+probeFixedFee : FixedFee
+probeFixedFee = FixedFee with fee = 1.5
+
+probeRelRound : RelRound
+probeRelRound = RelRound with diff = 3
+
+-- Reading a field back proves the reconstructed data-dependency interface
+-- carries the record structure, not just the type name.
+probeFixedFeeAmount : Decimal
+probeFixedFeeAmount = probeFixedFee.fee
+
+probeRelRoundDiff : Int
+probeRelRoundDiff = probeRelRound.diff
