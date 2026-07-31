@@ -1,0 +1,23 @@
+# GitHub "raw" browser URL, pointing at a branch
+#
+# What it shows: a branch is resolved to whatever commit it pointed at when you
+# ran the command, and pinned. Run the same command a week later and you get a
+# different SHA: a branch moves, the pin does not.
+#
+# Reach for it when: you want to grab the current state of a branch once, then
+# stay on that state until you deliberately update.
+#
+# Run this:
+#
+#   dpm-dev add dar \
+#     'https://github.com/canton-network/splice/raw/refs/heads/main/daml/dars/splice-amulet-0.1.19.dar' \
+#     --data-dependencies
+#
+# DPM should resolve `main` to a commit SHA and write a line of this shape into
+# daml.yaml:
+#
+#   - "git:github.com/canton-network/splice#<sha>?path=daml/dars/splice-amulet-0.1.19.dar"
+#
+# It should print:
+#
+#   Resolving git dependency: fetching https://github.com/canton-network/splice @ "main" path "daml/dars/splice-amulet-0.1.19.dar"

@@ -1,0 +1,17 @@
+# A GitHub release with no asset named: take all of them
+#
+# What it shows: drop `&asset=` and DPM expands the single entry into one line
+# per `.dar` asset attached to that release, writing them all back to daml.yaml.
+#
+# Reach for it when: you want a whole published library set and would rather not
+# type out thirty-five file names.
+#
+# After `dpm-dev install package`, DPM should list the release, fetch each `.dar`,
+# and replace this line with one fully-named
+# `git:…?release=test-release-0.0.6&asset=<file>.dar` entry per `.dar` on that
+# release. It should print:
+#
+#   Resolving git release: listing .dar assets for https://github.com/Moonsong-Labs/daml-finance.git release "test-release-0.0.6"
+
+data-dependencies:
+  - git:github.com/Moonsong-Labs/daml-finance.git?release=test-release-0.0.6

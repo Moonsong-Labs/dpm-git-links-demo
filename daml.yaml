@@ -1,0 +1,15 @@
+sdk-version: 3.5.2
+name: dpm-git-links-demo
+source: daml
+version: 0.0.1
+build-options:
+  - -Wno-template-interface-depends-on-daml-script
+
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script
+  - git:github.com/Moonsong-Labs/test-daml-hello#master?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar
+
+data-dependencies:
+  - git:github.com/canton-network/splice#release-line-0.6.8?path=daml/dars/splice-amulet-0.1.19.dar

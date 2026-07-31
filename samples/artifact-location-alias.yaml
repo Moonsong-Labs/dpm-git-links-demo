@@ -1,0 +1,22 @@
+# The artifact-locations @alias form
+#
+# What it shows: name a repository once under `artifact-locations`, then refer to
+# it as `@alias` in your dependency lines. The alias holds only the bare repo
+# URL; the `#ref` and `?path=` always stay on the dependency line. A location URL
+# that carries its own `#ref` or query string is rejected.
+#
+# Reach for it when: several DARs come from the same repository and you are
+# tired of repeating the URL.
+#
+# After `dpm-dev install package`, DPM should replace the `@hello#…` line with a
+# full pinned `git:` URL of the form
+# `git:github.com/Moonsong-Labs/test-daml-hello#<sha>?path=…`. The alias is
+# authoring-time only: it should not remain in `data-dependencies`. The
+# `artifact-locations` block should stay as written.
+
+artifact-locations:
+  "@hello":
+    url: git:github.com/Moonsong-Labs/test-daml-hello.git
+
+data-dependencies:
+  - "@hello#master?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar"

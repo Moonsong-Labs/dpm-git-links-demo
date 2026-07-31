@@ -1,0 +1,19 @@
+# The structured YAML mapping form, pointed at a whole release
+#
+# What it shows: the mapping form understands releases too. Swap `ref` and `path`
+# for `release`, leave `asset` out, and you get the same expansion as the packed
+# one-liner in `release-all-assets.yaml`.
+#
+# Reach for it when: you are generating daml.yaml from a template and want a
+# published library set without composing query strings. Two keys name 35 DARs.
+#
+# After `dpm-dev install package`, DPM should list the release and replace this
+# mapping with one fully-named `?release=…&asset=….dar` one-liner per `.dar` on
+# that release. It should print:
+#
+#   Resolving git release: listing .dar assets for https://github.com/Moonsong-Labs/daml-finance.git release "test-release-0.0.6"
+
+data-dependencies:
+  - git:
+      url: github.com/Moonsong-Labs/daml-finance.git
+      release: test-release-0.0.6

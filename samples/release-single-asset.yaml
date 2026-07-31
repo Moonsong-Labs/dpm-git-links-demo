@@ -1,0 +1,15 @@
+# A GitHub release asset, named explicitly
+#
+# What it shows: when a project attaches built DARs to its GitHub releases, you
+# do not need a path inside the repo at all. Use `?release=<tag>&asset=<file>.dar`
+# instead of `#<ref>?path=`.
+#
+# Reach for it when: the DAR you want is a release artifact rather than a file
+# checked into the tree. This is the common case for published Daml libraries.
+#
+# After `dpm-dev install package`, the line should stay a named release asset:
+# there is no git ref to pin, so DPM should not rewrite it to a `#<sha>?path=`
+# form.
+
+data-dependencies:
+  - "git:github.com/Moonsong-Labs/daml-finance?release=test-release-0.0.6&asset=daml-finance-interface-types-common.dar"
