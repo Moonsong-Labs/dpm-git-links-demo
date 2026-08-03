@@ -1,6 +1,8 @@
 # dpm-git-links-demo
 
-A tiny Daml project whose only unusual feature is two lines in `daml.yaml`:
+A tiny Daml project aimed to test git-like links resolution in DPM.
+
+The `daml.yaml` has two unusual lines:
 
 ```yaml
 data-dependencies:
@@ -22,7 +24,7 @@ way you can write the same kind of link.
 ## What you need
 
 - A locally built `dpm-dev`. Git links are not in a released DPM yet, so you
-  need the Moonsong Labs fork at the `with-data-deps-v1` tag:
+  need to use the [Moonsong Labs fork](https://github.com/Moonsong-Labs/dpm/) at the `with-data-deps-v1` tag:
 
   ```bash
   git clone --branch with-data-deps-v1 git@github.com:Moonsong-Labs/dpm.git
@@ -37,8 +39,8 @@ way you can write the same kind of link.
   the binary by path, as `/path/to/dpm/bin/dpm-dev`.
 - Network access to `github.com` the first time, so DPM can fetch the DARs.
   After that they are cached under `~/.dpm/cache`.
-- Nothing else. No Bazel, no Nix. This project pins `sdk-version: 3.5.2`, an
-  ordinary released SDK, and DPM installs it for you.
+- There's no need to recompile damlc. So no Bazel or Nix are required.
+- This project pins `sdk-version: 3.5.2`, an ordinary released SDK, and DPM installs it for you.
 
 ## Quick start
 
