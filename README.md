@@ -112,7 +112,10 @@ git:<host>/<repo>#<ref>?path=<path/inside/the/repo.dar>
 - `<ref>` is a branch, a tag, or a commit SHA.
 - `?path=` is required, is relative to the repo root, and must end in `.dar`.
 - A trailing `.git` on the repo is fine; DPM drops it.
-- HTTPS only. `git:ssh://…` is rejected.
+- HTTPS only. SSH is not supported: `git:ssh://…` and `git@github.com:org/repo`
+  are both rejected.
+- `github.com` only. GitLab, Bitbucket and GitHub Enterprise hosts are not
+  supported, so every link here starts with `github.com/`.
 
 Put it under `data-dependencies`. It is also accepted under `dependencies`, but
 that field carries constraints most published DARs cannot meet, so treat it as
@@ -288,3 +291,18 @@ or dropped.
 
 If you need a development-head SDK (`sdk-version: 0.0.0`), that is a
 DPM-contributor workflow and out of scope here.
+
+## Full specification and testing guide
+
+This README is a walkthrough, not the spec. For the complete git-links
+specification and the full testing guide, build the internal docs from your DPM
+checkout:
+
+```bash
+cd /path/to/dpm
+make run-docs-internal
+```
+
+That regenerates the CLI reference, builds the Sphinx site into
+`docs-internal/generated/html/` and opens it. The git-links material is under
+"Testing git DAR dependencies"; `sphinx-build` needs to be on your `PATH`.
