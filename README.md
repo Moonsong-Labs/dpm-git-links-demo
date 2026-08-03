@@ -156,6 +156,7 @@ from the docs.
 | [`browser-url-commit.yaml`](samples/browser-url-commit.yaml) | GitHub `blob` URL at a commit SHA, via `dpm-dev add dar` |
 | [`git-line-data-dependencies.yaml`](samples/git-line-data-dependencies.yaml) | The canonical `git:` one-liner under `data-dependencies` |
 | [`git-line-dependencies.yaml`](samples/git-line-dependencies.yaml) | The same line under `dependencies`, plus the Daml-LF catch |
+| [`git-line-dependencies-splice.yaml`](samples/git-line-dependencies-splice.yaml) | A DAR that `dependencies` rejects outright, and why no SDK pin saves it |
 | [`structured-yaml.yaml`](samples/structured-yaml.yaml) | Structured `url` / `ref` / `path` mapping: installs, then fails to build |
 | [`artifact-location-alias.yaml`](samples/artifact-location-alias.yaml) | Name the repo once under `artifact-locations`, use `@alias` |
 | [`release-single-asset.yaml`](samples/release-single-asset.yaml) | GitHub release, one named asset |
@@ -227,12 +228,17 @@ there, and a published library usually fails at least one:
 3. The full transitive closure must be declared explicitly, even though the DAR
    already contains every dalf it needs.
 
-`splice-amulet` fails rules 2 and 3 in a way you cannot fix from your side:
-its own DAR set spans three SDK versions, and dropping your project to the
-oldest of them is not an option, because git links target current SDKs.
-`data-dependencies` applies none of these rules — it reconstructs the interface
-from the DAR — which is why this project puts both of its links there and needs
-no `build-options` at all.
+`splice-amulet` fails rules 2 and 3 in a way you cannot fix from your side. It
+was built by SDK 3.4.11 and ships `daml-stdlib-3.4.11` inside its own closure,
+while this project is on 3.5.2, so rule 2 stops the build with `Package
+dependencies from different SDK versions: 3.4.11, 3.5.2`. Pinning your project
+to 3.4.11 to match does not rescue it: on that SDK, git links are not resolved
+at all, and `damlc` is handed the raw link as if it were a filename. So 3.5.2
+resolves the link and then rejects the DAR, and 3.4.11 would accept the DAR and
+never resolves the link. `data-dependencies` applies none of these rules — it
+reconstructs the interface from the DAR — which is why this project puts both of
+its links there and needs no `build-options` at all. See
+[`git-line-dependencies-splice.yaml`](samples/git-line-dependencies-splice.yaml).
 
 **The structured YAML form installs but will not build.** `dpm-dev install
 package` accepts a `- git:` mapping with `url` / `ref` / `path` keys, resolves

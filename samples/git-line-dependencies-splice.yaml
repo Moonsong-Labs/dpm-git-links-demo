@@ -1,0 +1,44 @@
+# A git: line under dependencies that cannot be made to work
+#
+# What it shows: the sibling of git-line-dependencies.yaml, and the reason this
+# project keeps splice-amulet under data-dependencies. The Hello DAR fails one
+# `dependencies` rule and a build-option fixes it. This DAR fails a different
+# rule, and nothing you write in your daml.yaml fixes it.
+#
+# splice-amulet-0.1.19 was built by SDK 3.4.11. Its manifest says so, and it
+# ships daml-stdlib-3.4.11 inside its own closure. This project is on SDK 3.5.2.
+# Under `dependencies` the DAR is linked in as a library, so every package in
+# the build has to come from one SDK, and `dpm-dev build` refuses:
+#
+#   damlc: user error (Package dependencies from different SDK versions: 3.4.11, 3.5.2)
+#
+# `dpm-dev install package` succeeds first, which is misleading. Installing only
+# resolves and caches the DAR; nothing checks how it was built until the build.
+#
+# Why dropping to sdk-version 3.4.11 is not the escape hatch: on that SDK, git
+# links do not resolve at all with dpm-dev at with-data-deps-v1. damlc is handed
+# the unresolved link as if it were a filename:
+#
+#   damlc: git:github.com/canton-network/splice#63cfb340ce0f8f254386d2d5df58905d695de902?path=daml/dars/splice-amulet-0.1.19.dar: openBinaryFile: does not exist (No such file or directory)
+#
+# That happens under `data-dependencies` too, so it is the SDK version and not
+# the field. The same project on sdk-version 3.5.2 builds. So the two SDKs you
+# might pin to each rule the other one out: 3.5.2 resolves the link and then
+# rejects the DAR, 3.4.11 would accept the DAR and never resolves the link.
+#
+# The remaining route is rule 3: declare splice-amulet's full transitive closure
+# by hand. Its manifest lists 40-odd dalfs, including eight splice-api packages
+# and splice-util, all of which would have to be linked and version-matched too.
+#
+# Reach for it when: never. This is recorded so the error is recognizable. Put
+# the line under data-dependencies, which reconstructs the interface from the
+# DAR and applies none of these rules. See git-line-data-dependencies.yaml.
+#
+# Verified: both errors captured by running dpm-dev, on macOS.
+
+sdk-version: 3.5.2
+
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - "git:github.com/canton-network/splice#63cfb340ce0f8f254386d2d5df58905d695de902?path=daml/dars/splice-amulet-0.1.19.dar"
