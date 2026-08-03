@@ -28,10 +28,13 @@ way you can write the same kind of link.
   git clone --branch with-data-deps-v1 git@github.com:Moonsong-Labs/dpm.git
   cd dpm
   go build -o bin/dpm-dev ./cmd/dpm/
+  export PATH="$PWD/bin:$PATH"
   ```
 
-  Building needs Go 1.25.0. The commands below assume `dpm-dev` is on your
-  `PATH`; otherwise call it by path, as `/path/to/dpm/bin/dpm-dev`.
+  Building needs Go 1.25.0. The `export` puts `dpm-dev` on your `PATH` for the
+  current shell only; add the same line to your `~/.zshrc` or `~/.bashrc` with
+  the real path in place of `$PWD` to make it stick. Otherwise skip it and call
+  the binary by path, as `/path/to/dpm/bin/dpm-dev`.
 - Network access to `github.com` the first time, so DPM can fetch the DARs.
   After that they are cached under `~/.dpm/cache`.
 - Nothing else. No Bazel, no Nix. This project pins `sdk-version: 3.5.2`, an
