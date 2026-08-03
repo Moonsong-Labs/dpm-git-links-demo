@@ -5,9 +5,10 @@
 #   git:<host>/<repo>#<ref>?path=<path/inside/the/repo.dar>
 #
 # `<ref>` is a branch, a tag, or a commit SHA. `?path=` is required and must end
-# in `.dar`. A trailing `.git` on the repo is accepted and then dropped, and
-# `/` in the path may be written plainly or percent-encoded as `%2F` -- DPM
-# writes `%2F` when it rewrites the line.
+# in `.dar`. A trailing `.git` on the repo is accepted and then dropped. The `/`
+# separators inside `?path=` may be written plainly or percent-encoded as `%2F`;
+# both are accepted, and DPM writes one or the other depending on which code
+# path touched the line last.
 #
 # Reach for it when: this is the default. It is what this repo's own daml.yaml
 # uses, and what you should write by hand.
