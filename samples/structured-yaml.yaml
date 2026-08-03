@@ -19,6 +19,9 @@
 # pinned in place and the form stayed structured. DPM also wrote back two empty
 # keys, `release: ""` and `asset: ""`, that were not there before. They are
 # harmless and re-reading the file works, but do not be surprised by them.
+#
+# Those two keys are not filler: fill them in instead of `ref` and `path` and the
+# mapping names a release asset. See `release-all-assets-structured.yaml`.
 
 data-dependencies:
   - git:

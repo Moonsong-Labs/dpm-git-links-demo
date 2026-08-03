@@ -1,0 +1,60 @@
+# The structured YAML mapping form, pointed at a whole release
+#
+# What it shows: the mapping form understands releases too. Swap `ref` and `path`
+# for `release`, leave `asset` out, and you get the same expansion as the packed
+# one-liner in `release-all-assets.yaml`: one entry per `.dar` on the release,
+# each one still written as a mapping.
+#
+# Reach for it when: you are generating daml.yaml from a template and want a
+# published library set without composing query strings. Two keys name 35 DARs.
+#
+# Write this:
+#
+#   data-dependencies:
+#     - git:
+#         url: github.com/Moonsong-Labs/daml-finance.git
+#         release: test-release-0.0.6
+#
+# `dpm install package` printed:
+#
+#   Resolving git release: listing .dar assets for https://github.com/Moonsong-Labs/daml-finance.git release "test-release-0.0.6"
+#   All 35 git release assets already cached
+#
+# and replaced the single mapping with 35 of them. Note the two empty keys DPM
+# adds, `ref: ""` and `path: ""`, the same write-back you see in
+# `structured-yaml.yaml`. Running install again changes nothing further.
+#
+# Same catch as the other structured sample, though: this installs and will not
+# build. `dpm build` rejects the file DPM itself just wrote:
+#
+#   damlc: ConfigFieldInvalid "package" ["data-dependencies"] "Error in $[0]: expected String, but encountered Object"
+#
+# So reach for `release-all-assets.yaml` if you need the build to work. The first
+# few of the 35 entries:
+
+data-dependencies:
+  - git:
+      url: github.com/Moonsong-Labs/daml-finance
+      ref: ""
+      path: ""
+      release: test-release-0.0.6
+      asset: contingent-claims-core.dar
+  - git:
+      url: github.com/Moonsong-Labs/daml-finance
+      ref: ""
+      path: ""
+      release: test-release-0.0.6
+      asset: contingent-claims-lifecycle.dar
+  - git:
+      url: github.com/Moonsong-Labs/daml-finance
+      ref: ""
+      path: ""
+      release: test-release-0.0.6
+      asset: contingent-claims-valuation.dar
+  - git:
+      url: github.com/Moonsong-Labs/daml-finance
+      ref: ""
+      path: ""
+      release: test-release-0.0.6
+      asset: daml-finance-account.dar
+  # ... 31 more, one per .dar asset on the release

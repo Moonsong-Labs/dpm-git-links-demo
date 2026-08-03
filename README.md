@@ -127,6 +127,10 @@ git:<host>/<repo>?release=<tag>&asset=<file>.dar
 Omit `&asset=` and DPM expands the entry into one line per `.dar` attached to
 that release.
 
+Both shapes also have a structured spelling, a `- git:` mapping with `url` plus
+either `ref` / `path` or `release` / `asset` as keys. It resolves and expands the
+same way, but does not survive to `dpm-dev build` (see [Gotchas](#gotchas)).
+
 ### Or let DPM write the line
 
 You do not have to assemble that string by hand. Find the DAR on GitHub, copy
@@ -161,6 +165,7 @@ from the docs.
 | [`artifact-location-alias.yaml`](samples/artifact-location-alias.yaml) | Name the repo once under `artifact-locations`, use `@alias` |
 | [`release-single-asset.yaml`](samples/release-single-asset.yaml) | GitHub release, one named asset |
 | [`release-all-assets.yaml`](samples/release-all-assets.yaml) | GitHub release, no asset named: all 35 of them |
+| [`release-all-assets-structured.yaml`](samples/release-all-assets-structured.yaml) | The same whole-release expansion written as a `release` mapping |
 
 The samples use three real DARs: `splice-amulet-0.1.19.dar` from
 `canton-network/splice`, the small `Hello` fixture this project also builds
@@ -249,8 +254,10 @@ file DPM itself just wrote:
 damlc: ConfigFieldInvalid "package" ["data-dependencies"] "Error in $[0]: expected String, but encountered Object"
 ```
 
-Use the one-liner. See
-[`structured-yaml.yaml`](samples/structured-yaml.yaml).
+This applies to the release variant of the mapping as well: a `url` / `release`
+mapping resolves and expands to one mapping per asset, then hits the same error.
+Use the one-liner. See [`structured-yaml.yaml`](samples/structured-yaml.yaml)
+and [`release-all-assets-structured.yaml`](samples/release-all-assets-structured.yaml).
 
 ## Troubleshooting
 
@@ -264,7 +271,8 @@ Use the one-liner. See
 | `Package dependencies from different SDK versions` | DARs under `dependencies` built by more than one SDK. Move them to `data-dependencies`. |
 | `cannot satisfy --package <name>: unusable due to missing dependencies` | A `dependencies` entry whose transitive closure is not declared. Move it to `data-dependencies`. |
 | `ConfigFieldInvalid "package" ["data-dependencies"] … expected String, but encountered Object` | The structured `url` / `ref` / `path` mapping form. Use the one-liner. |
-| A wall of HTML ending in `HTTP 404` | A `?release=` tag or `&asset=` name that does not exist. DPM currently echoes GitHub's 404 page; check the tag and asset names on the release page. |
+| `release "<tag>" not found for <owner>/<repo>` | A `?release=` tag that does not exist. Check it against the repo's releases page. |
+| `asset "<name>" not found in <owner>/<repo> release "<tag>": check that the release tag and the asset name both exist` | An `&asset=` name that is not attached to that release. GitHub answers 404 for an unknown tag and an unknown asset alike, so check both. |
 
 To re-resolve from scratch, delete `.daml/` for a clean build, and
 `~/.dpm/cache/git` as well if you want to force a fresh clone.
