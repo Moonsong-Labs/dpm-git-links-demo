@@ -1,14 +1,15 @@
 -- | The demo application.
 --
--- `greeting` is not defined anywhere in this repository. It comes from a DAR
--- that lives in another git repository, declared as a single line under
--- `data-dependencies` in daml.yaml. That one line is the whole point of this
--- demo: no vendored .dar file, no registry, no manual download step.
+-- Neither `greeting` nor `Amulet` is defined anywhere in this repository. Both
+-- come from DARs that live in other git repositories, declared as two lines
+-- under `data-dependencies` in daml.yaml. Those two lines are the whole point
+-- of this demo: no vendored .dar file, no registry, no manual download step.
 module Main where
 
 import Daml.Script
 
 import Hello (greeting)
+import Splice.Amulet (Amulet)
 
 template Greeting
   with
@@ -26,9 +27,15 @@ template Greeting
       do
         create this with message = newMessage
 
--- | Built from text that came out of the git-hosted DAR.
+-- | Built from text that came out of the git-hosted Hello DAR.
 baselineMessage : Text
 baselineMessage = greeting <> " from dpm-git-links-demo"
+
+-- | Reads a field off a template type defined in the git-hosted splice-amulet
+-- DAR. Nothing in this demo creates an Amulet; naming the type is enough to
+-- make the second link load-bearing.
+amuletOwner : Amulet -> Party
+amuletOwner amulet = amulet.owner
 
 setup : Script (Party, ContractId Greeting)
 setup = do
