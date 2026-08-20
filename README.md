@@ -113,9 +113,12 @@ git:<host>/<repo>#<ref>?path=<path/inside/the/repo.dar>
 - `?path=` is required, is relative to the repo root, and must end in `.dar`.
 - A trailing `.git` on the repo is fine; DPM drops it.
 - HTTPS only. SSH is not supported: `git:ssh://…` and `git@github.com:org/repo`
-  are both rejected.
+  are both rejected. DPM fetches anonymously over HTTPS and never touches your
+  SSH agent, keys or tokens, so the repo you depend on has to be public.
 - `github.com` only. GitLab, Bitbucket and GitHub Enterprise hosts are not
-  supported, so every link here starts with `github.com/`.
+  supported, so every link here starts with `github.com/`. The `?release=` form
+  is the strictest about it, since it reads the GitHub releases API and says so
+  when the host is not GitHub.
 
 Put it under `data-dependencies`. It is also accepted under `dependencies`, but
 that field carries constraints most published DARs cannot meet, so treat it as
@@ -270,6 +273,8 @@ and [`release-all-assets-structured.yaml`](samples/release-all-assets-structured
 | `?path= is required (e.g. git:github.com/org/repo.git#main?path=loyalty.dar)` | A `git:` line with a ref but no `?path=`. |
 | `repo-relative path "README.md" must end with .dar` | `?path=` points at something that is not a DAR. |
 | `only https:// clone URLs are supported` | An SSH clone URL. Use the HTTPS form. |
+| `parse "git@github.com:org/repo.git": first path segment in URL cannot contain colon` | The scp-style SSH spelling. Write `git:github.com/org/repo` instead. |
+| `<host> does not expose the GitHub releases API, so ?release= dependencies are only supported for github.com` | A `?release=` link aimed at a host other than GitHub. |
 | `Targeted LF version 2.2 but dependencies have different LF versions` | An LF mismatch under `dependencies`. See [Gotchas](#gotchas). |
 | `Package dependencies from different SDK versions` | DARs under `dependencies` built by more than one SDK. Move them to `data-dependencies`. |
 | `cannot satisfy --package <name>: unusable due to missing dependencies` | A `dependencies` entry whose transitive closure is not declared. Move it to `data-dependencies`. |
@@ -279,6 +284,25 @@ and [`release-all-assets-structured.yaml`](samples/release-all-assets-structured
 
 To re-resolve from scratch, delete `.daml/` for a clean build, and
 `~/.dpm/cache/git` as well if you want to force a fresh clone.
+
+## Full specification and testing guide
+
+This README is a walkthrough, not the spec. The complete git-links specification
+and the step-by-step testing guide live in DPM's internal docs, which ship with
+the source rather than on a website, so you build them from the same checkout
+you built `dpm-dev` from:
+
+```bash
+cd /path/to/dpm
+make run-internal-docs
+```
+
+That regenerates the CLI reference, builds the Sphinx site into
+`docs-internal/generated/html/` and opens it in your browser; `sphinx-build`
+needs to be on your `PATH`. The page you want is "Testing Git DAR dependencies",
+from `docs-internal/src/testing-git-dar-dependencies.rst`. Those docs are
+written for DPM contributors and are not part of DPM's public API, so treat them
+as authoritative on behavior but not as a stability promise.
 
 ## Notes
 
@@ -291,18 +315,3 @@ or dropped.
 
 If you need a development-head SDK (`sdk-version: 0.0.0`), that is a
 DPM-contributor workflow and out of scope here.
-
-## Full specification and testing guide
-
-This README is a walkthrough, not the spec. For the complete git-links
-specification and the full testing guide, build the internal docs from your DPM
-checkout:
-
-```bash
-cd /path/to/dpm
-make run-docs-internal
-```
-
-That regenerates the CLI reference, builds the Sphinx site into
-`docs-internal/generated/html/` and opens it. The git-links material is under
-"Testing git DAR dependencies"; `sphinx-build` needs to be on your `PATH`.
