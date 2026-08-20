@@ -27,7 +27,7 @@ way you can write the same kind of link.
   need to use the [Moonsong Labs fork](https://github.com/Moonsong-Labs/dpm/) at the `with-data-deps-v1` tag:
 
   ```bash
-  git clone --branch with-data-deps-v1 git@github.com:Moonsong-Labs/dpm.git
+  git clone --branch proposal/git-dependencies-support git@github.com:Moonsong-Labs/dpm.git
   cd dpm
   go build -o bin/dpm-dev ./cmd/dpm/
   export PATH="$PWD/bin:$PATH"
