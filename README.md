@@ -127,11 +127,6 @@ git:<host>/<repo>?release=<tag>&asset=<file>.dar
 For a GitHub release with all its assets, omit `&asset=`. DPM will expand the entry into one line per `.dar` attached to
 that release.
 
-Both shapes also have a structured spelling, a `- git:` mapping with `url` plus
-either `ref` / `path` or `release` / `asset` as keys. It resolves and expands the
-same way; `dpm-dev install package` then rewrites the mapping to the canonical
-one-liner so `dpm-dev build` sees a string.
-
 ### Git Raw links support 
 
 We support this feature via `dpm add dar`, so you don't have to assemble the git line by hand. You can copy any Git URL pointing to a DAR, and hand it over:
@@ -155,11 +150,9 @@ not frozen in the samples.
 | [`browser-url-tag.yaml`](samples/browser-url-tag.yaml) | GitHub `raw` URL at a release tag, via `dpm-dev add dar` |
 | [`browser-url-branch.yaml`](samples/browser-url-branch.yaml) | GitHub `raw` URL on a branch, via `dpm-dev add dar` |
 | [`browser-url-commit.yaml`](samples/browser-url-commit.yaml) | GitHub `blob` URL at a commit SHA, via `dpm-dev add dar` |
-| [`structured-yaml.yaml`](samples/structured-yaml.yaml) | Structured `url` / `ref` / `path` mapping, rewritten to a one-liner |
 | [`artifact-location-alias.yaml`](samples/artifact-location-alias.yaml) | Name the repo once under `artifact-locations`, use `@alias` |
 | [`release-single-asset.yaml`](samples/release-single-asset.yaml) | GitHub release, one named asset |
 | [`release-all-assets.yaml`](samples/release-all-assets.yaml) | GitHub release, no asset named: all 35 of them |
-| [`release-all-assets-structured.yaml`](samples/release-all-assets-structured.yaml) | The same whole-release expansion written as a `release` mapping |
 
 The samples use three real DARs: `splice-amulet-0.1.19.dar` from
 `canton-network/splice`, the small `Hello` fixture this project also builds
@@ -212,11 +205,6 @@ You may also see DPM flip the `/` separators inside `?path=` between plain and
 percent-encoded (`dist/foo.dar` and `dist%2Ffoo.dar`) on the first run after a
 pin. Both forms are accepted and it settles after one run, but it will show up
 as a diff in your working tree.
-
-A structured `- git:` mapping is rewritten the same way: `url` / `ref` / `path`
-(or `release` / `asset`) becomes the pinned one-liner. See
-[`structured-yaml.yaml`](samples/structured-yaml.yaml) and
-[`release-all-assets-structured.yaml`](samples/release-all-assets-structured.yaml).
 
 ### `dependencies` is stricter than `data-dependencies`
 
