@@ -52,8 +52,12 @@ Resolving git dependency: fetching https://github.com/canton-network/splice @ "r
 No opt-in components to install
 ```
 
-The two `Resolving` lines only appear when the DAR is not cached yet. The
-committed `daml.yaml` uses movable refs (`master` and `release-line-0.6.8`) on
+The two `Resolving` lines appear whenever DPM has to turn a movable ref
+(a branch or a tag) into a commit. They still print if the repo is already
+cached. Once `daml.yaml` is pinned to a SHA, a later `dpm-dev install package`
+skips them.
+
+The committed `daml.yaml` uses movable refs (`master` and `release-line-0.6.8`) on
 purpose, so `dpm-dev install package` will pin them to commit SHAs and dirty
 your working tree. That rewrite is expected; do not commit it — restore the
 unpinned file before you push.
@@ -116,7 +120,7 @@ git:<host>/<repo>#<ref>?path=<path/inside/the/repo.dar>
   On other hosts, depend on a committed `.dar` with
   `#<ref>?path=` instead.
 
-Put it either under `dependencies` or `data-dependencies`. If your dependency goes the the former, the package will need to match the SDK version of the demo app, which is set to be 3.5.2.
+Put it either under `dependencies` or `data-dependencies`. If you put it under the former, the package will need to match the SDK version of the demo app, which is 3.5.2.
 
 For a GitHub release single asset, swap `#<ref>?path=` for a release query:
 
@@ -195,20 +199,16 @@ corruption: a branch moves, so a build that says "whatever `master` is today"
 is not reproducible. In your own project, commit the pinned line, and re-run
 `dpm-dev add dar` (or `dpm-dev update`) when you actually want to move. Adding
 the *same* DAR from the *same* repo at a different ref updates the existing
-line rather than appending a second one, and DPM says so:
+line rather than appending a second one. The message names the incoming line,
+not the one already in the file:
 
 ```
-dependency "git:github.com/canton-network/splice#main?path=daml/dars/splice-amulet-0.1.19.dar" already exists in daml.yaml, will be updated...
+dependency "git:github.com/canton-network/splice#0.6.10?path=daml/dars/splice-amulet-0.1.19.dar" already exists in daml.yaml, will be updated...
 ```
-
-You may also see DPM flip the `/` separators inside `?path=` between plain and
-percent-encoded (`dist/foo.dar` and `dist%2Ffoo.dar`) on the first run after a
-pin. Both forms are accepted and it settles after one run, but it will show up
-as a diff in your working tree.
 
 ### `dependencies` is stricter than `data-dependencies`
 
-At list these two rules apply to every put under `dependencies`:
+At least these two rules apply to every entry under `dependencies`:
 
 1. Daml-LF version must equal your build target. Point `dependencies` at
    `test-daml-hello-sdk-3.5.2-lf-2.1.dar` and SDK 3.5.2 (which targets LF 2.2)
@@ -218,9 +218,9 @@ At list these two rules apply to every put under `dependencies`:
    yours included, or you get `Package dependencies from different SDK
    versions`.
 
-`splice-amulet` fails rules 2 and 3 in a way you cannot fix from your side. It
+`splice-amulet` fails rule 2 in a way you cannot fix from your side. It
 was built by SDK 3.4.11 and ships `daml-stdlib-3.4.11` inside its own closure,
-while this project is on 3.5.2, so rule 2 stops the build with `Package
+while this project is on 3.5.2, so the build stops with `Package
 dependencies from different SDK versions: 3.4.11, 3.5.2`.
 
 ## Troubleshooting
@@ -236,8 +236,8 @@ dependencies from different SDK versions: 3.4.11, 3.5.2`.
 | `Targeted LF version 2.2 but dependencies have different LF versions` | An LF mismatch under `dependencies`. See [Gotchas](#gotchas). |
 | `Package dependencies from different SDK versions` | DARs under `dependencies` built by more than one SDK. Move them to `data-dependencies`. |
 | `cannot satisfy --package <name>: unusable due to missing dependencies` | A `dependencies` entry whose transitive closure is not declared. Move it to `data-dependencies`. |
-| `release "<tag>" not found for <owner>/<repo>` | A `?release=` tag that does not exist. Check it against the repo's releases page. |
-| `asset "<name>" not found in <owner>/<repo> release "<tag>": check that the release tag and the asset name both exist` | An `&asset=` name that is not attached to that release. GitHub answers 404 for an unknown tag and an unknown asset alike, so check both. |
+| `release "<tag>" not found for <owner>/<repo>` | A `?release=` tag that does not exist, when you omitted `&asset=`. Check it against the repo's releases page. |
+| `asset "<name>" not found in <owner>/<repo> release "<tag>": check that the release tag and the asset name both exist` | An `&asset=` that GitHub could not serve. That is the message for a missing asset on a real tag, and also for a tag that does not exist (GitHub answers 404 for both). |
 
 To re-resolve from scratch, delete `.daml/` for a clean build, and
 `~/.dpm/cache/git` as well if you want to force a fresh clone.
