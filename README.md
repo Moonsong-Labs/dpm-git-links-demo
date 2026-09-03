@@ -1,3 +1,4 @@
+
 # DPM Git Dependencies Demo App 
 
 A tiny Daml project aimed to test git-like links resolution in DPM.
@@ -6,6 +7,7 @@ The committed `daml.yaml` declares two git dependencies:
 
 ```yaml
 dependencies:
+
   - git:github.com/Moonsong-Labs/test-daml-hello#master?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar
 
 data-dependencies:
@@ -13,6 +15,10 @@ data-dependencies:
 ```
 
 Each line points at a `.dar` file sitting in two different Git repositories. One of them exposes a `Hello.greeting` value and the other is a known library used in production, that exposes, among other things, the template `Splice.Amulet.Amulet`. Both are imported in the app, so if either link stops resolving, the build will fail. 
+
+
+<img alt="demo" src="https://github.com/user-attachments/assets/cf32ef00-5ca1-4da7-937f-67489534ffeb" />
+
 
 ## What you need
 
