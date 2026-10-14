@@ -19,4 +19,4 @@ artifact-locations:
     url: git:github.com/Moonsong-Labs/test-daml-hello.git
 
 data-dependencies:
-  - "@hello#master?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar"
+  - "@hello#master?path=dist/test-daml-hello-sdk-3.6.0-lf-2.3.dar"
