@@ -6,7 +6,7 @@
 # Reach for it when: you want a whole published library set and would rather not
 # type out thirty-five file names.
 #
-# After `dpm-dev install package`, DPM should list the release, fetch each `.dar`,
+# After `dpm install package`, DPM should list the release, fetch each `.dar`,
 # and replace this line with one fully-named
 # `git:…?release=test-release-0.0.6&asset=<file>.dar` entry per `.dar` on that
 # release. It should print:

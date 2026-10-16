@@ -8,7 +8,7 @@
 # Reach for it when: several DARs come from the same repository and you are
 # tired of repeating the URL.
 #
-# After `dpm-dev install package`, DPM should replace the `@hello#…` line with a
+# After `dpm install package`, DPM should replace the `@hello#…` line with a
 # full pinned `git:` URL of the form
 # `git:github.com/Moonsong-Labs/test-daml-hello#<sha>?path=…`. The alias is
 # authoring-time only: it should not remain in `data-dependencies`. The
