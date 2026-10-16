@@ -1,7 +1,7 @@
 # GitHub "raw" browser URL, pointing at a release tag
 #
 # What it shows: you can copy a DAR's URL straight out of your browser's
-# address bar and hand it to `dpm-dev add dar`. DPM rewrites it into the
+# address bar and hand it to `dpm add dar`. DPM rewrites it into the
 # canonical `git:` form for you.
 #
 # Reach for it when: you found the DAR by clicking around GitHub and do not
@@ -9,7 +9,7 @@
 #
 # Run this:
 #
-#   dpm-dev add dar \
+#   dpm add dar \
 #     'https://github.com/canton-network/splice/raw/refs/tags/0.6.10/daml/dars/splice-amulet-0.1.19.dar' \
 #     --data-dependencies
 #

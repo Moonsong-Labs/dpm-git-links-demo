@@ -22,32 +22,34 @@ Each line points at a `.dar` file sitting in two different Git repositories. One
 
 ## What you need
 
-- A locally built `dpm-dev`. Git links are not in a released DPM yet, so you
-  need to use the [Moonsong Labs fork](https://github.com/Moonsong-Labs/dpm/) at the `proposal/git-dependencies-support` branch:
+- A `dpm` built from the `main` branch of [digital-asset/dpm](https://github.com/digital-asset/dpm).
+  Git links were merged in [digital-asset/dpm#311](https://github.com/digital-asset/dpm/pull/311)
+  but are not in a tagged release yet (the latest, 1.0.22, predates the merge):
 
   ```bash
-  git clone --branch proposal/git-dependencies-support git@github.com:Moonsong-Labs/dpm.git
+  git clone https://github.com/digital-asset/dpm.git
   cd dpm
-  go build -o bin/dpm-dev ./cmd/dpm/
+  go build -o bin/dpm ./cmd/dpm/
   export PATH="$PWD/bin:$PATH"
   ```
 
-  Building needs Go 1.25.0. The `export` puts `dpm-dev` on your `PATH` for the
-  current shell; add the same line to your `~/.zshrc` or `~/.bashrc` with
-  the real path in place of `$PWD` to make it durable. You can also call
-  the binary by the full path, as `/path/to/dpm/bin/dpm-dev`.
+  Building needs Go 1.26.6. The `export` puts this `dpm` first on your `PATH`
+  for the current shell, ahead of any released `dpm` you may already have,
+  which would not understand git links. You can also call the binary by the
+  full path, as `/path/to/dpm/bin/dpm`.
+- A Java 17 runtime. `dpm test` uses it to run the Daml Script tests.
 - Network access to `github.com` the first time, so DPM can fetch the DARs.
   After that they are cached under `~/.dpm/cache`.
 
 ## Quick start
 
 ```bash
-dpm-dev install package
-dpm-dev build
-dpm-dev test
+dpm install package
+dpm build
+dpm test
 ```
 
-`dpm-dev install package` resolves both git dependencies and caches the DARs, you should see something like:
+`dpm install package` resolves both git dependencies and caches the DARs, you should see something like:
 
 ```
 SDK version 3.5.2 is already installed
@@ -60,15 +62,15 @@ No opt-in components to install
 
 The two `Resolving` lines appear whenever DPM has to turn a movable ref
 (a branch or a tag) into a commit. They still print if the repo is already
-cached. Once `daml.yaml` is pinned to a SHA, a later `dpm-dev install package`
+cached. Once `daml.yaml` is pinned to a SHA, a later `dpm install package`
 skips them.
 
 The committed `daml.yaml` uses movable refs (`master` and `release-line-0.6.8`) on
-purpose, so `dpm-dev install package` will pin them to commit SHAs and dirty
+purpose, so `dpm install package` will pin them to commit SHAs and dirty
 your working tree. That rewrite is expected; do not commit it — restore the
 unpinned file before you push.
 
-`dpm-dev build` compiles, including the module that imports from both git-hosted
+`dpm build` compiles, including the module that imports from both git-hosted
 DARs:
 
 ```
@@ -80,7 +82,7 @@ warn that uploading the DAR also uploads `daml-script`. That is expected for a
 single-package demo and unrelated to git links, so `daml.yaml` silences it with
 `-Wno-template-interface-depends-on-daml-script`.
 
-`dpm-dev test` runs the scripts in `daml/Tests.daml`:
+`dpm test` runs the scripts in `daml/Tests.daml`:
 
 ```
 Test Summary
@@ -91,7 +93,7 @@ daml/Tests.daml:testSetup: ok, 1 active contracts, 1 transactions.
 ```
 
 To prove the links are doing real work, delete either one from `daml.yaml` and
-run `dpm-dev build` again. Without the splice line:
+run `dpm install package && dpm build` again. Without the splice line:
 
 ```
 Could not find module ‘Splice.Amulet’
@@ -142,7 +144,7 @@ that release.
 We support this feature via `dpm add dar`, so you don't have to assemble the git line by hand. You can copy any Git URL pointing to a DAR, and hand it over:
 
 ```bash
-dpm-dev add dar \
+dpm add dar \
   'https://github.com/canton-network/splice/raw/refs/tags/0.6.10/daml/dars/splice-amulet-0.1.19.dar' \
   --data-dependencies
 ```
@@ -157,9 +159,9 @@ not frozen in the samples.
 
 | Sample | Form |
 | --- | --- |
-| [`browser-url-tag.yaml`](samples/browser-url-tag.yaml) | GitHub `raw` URL at a release tag, via `dpm-dev add dar` |
-| [`browser-url-branch.yaml`](samples/browser-url-branch.yaml) | GitHub `raw` URL on a branch, via `dpm-dev add dar` |
-| [`browser-url-commit.yaml`](samples/browser-url-commit.yaml) | GitHub `blob` URL at a commit SHA, via `dpm-dev add dar` |
+| [`browser-url-tag.yaml`](samples/browser-url-tag.yaml) | GitHub `raw` URL at a release tag, via `dpm add dar` |
+| [`browser-url-branch.yaml`](samples/browser-url-branch.yaml) | GitHub `raw` URL on a branch, via `dpm add dar` |
+| [`browser-url-commit.yaml`](samples/browser-url-commit.yaml) | GitHub `blob` URL at a commit SHA, via `dpm add dar` |
 | [`artifact-location-alias.yaml`](samples/artifact-location-alias.yaml) | Name the repo once under `artifact-locations`, use `@alias` |
 | [`release-single-asset.yaml`](samples/release-single-asset.yaml) | GitHub release, one named asset |
 | [`release-all-assets.yaml`](samples/release-all-assets.yaml) | GitHub release, no asset named: all 35 of them |
@@ -173,7 +175,7 @@ a different repo.
 
 ## Gotchas
 
-### **A browser URL works with `dpm-dev add dar` but not in `daml.yaml`.** 
+### **A browser URL works with `dpm add dar` but not in `daml.yaml`.** 
 
 Pasting one raw Git link into a dependency list fails:
 
@@ -186,9 +188,9 @@ data-dependencies:
 Error: failed to parse provided data-dependencies: couldn't parse dependency "https://github.com/canton-network/splice/raw/refs/tags/0.6.10/daml/dars/splice-amulet-0.1.19.dar": http dependencies not yet supported
 ```
 
-URL normalization only happens inside `dpm-dev add dar`. When DPM reads
+URL normalization only happens inside `dpm add dar`. When DPM reads
 `daml.yaml` it expects a `git:` line and nothing else. So do not paste browser
-URLs into the file: pass them to `dpm-dev add dar` and let it write the
+URLs into the file: pass them to `dpm add dar` and let it write the
 canonical line.
 
 ### **DPM rewrites your `daml.yaml`** 
@@ -200,10 +202,10 @@ Write a branch or a tag and DPM replaces it with the commit SHA that ref pointed
 + git:github.com/Moonsong-Labs/test-daml-hello#<sha>?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar
 ```
 
-Both `dpm-dev install` and `dpm-dev add dar` do this. It is pinning, not
+Both `dpm install` and `dpm add dar` do this. It is pinning, not
 corruption: a branch moves, so a build that says "whatever `master` is today"
 is not reproducible. In your own project, commit the pinned line, and re-run
-`dpm-dev add dar` (or `dpm-dev update`) when you actually want to move. Adding
+`dpm add dar` (or `dpm update`) when you actually want to move. Adding
 the *same* DAR from the *same* repo at a different ref updates the existing
 line rather than appending a second one. The message names the incoming line,
 not the one already in the file:
@@ -233,7 +235,7 @@ dependencies from different SDK versions: 3.4.11, 3.5.2`.
 
 | Message | Cause |
 | --- | --- |
-| `http dependencies not yet supported` | A browser URL in `daml.yaml`. Use `dpm-dev add dar` instead. |
+| `http dependencies not yet supported` | A browser URL in `daml.yaml`. Use `dpm add dar` instead. |
 | `?path= is required (e.g. git:github.com/org/repo.git#main?path=loyalty.dar)` | A `git:` line with a ref but no `?path=`. |
 | `repo-relative path "README.md" must end with .dar` | `?path=` points at something that is not a DAR. |
 | `only https:// clone URLs are supported` | An SSH clone URL. Use the HTTPS form. |
@@ -250,10 +252,6 @@ To re-resolve from scratch, delete `.daml/` for a clean build, and
 
 ## Technical specification and testing guide
 
-You can get more details about the git-links specification in the internal docs of the DPM
-repository you checked out earlier. From there, you can generate the docs with:
-
-```bash
-cd /path/to/dpm
-make run-internal-docs
-```
+- The [technical design and testing guide](https://moonsong-labs.github.io/dpm/) for git links.
+- The release note in [`UNRELEASED.md`](https://github.com/digital-asset/dpm/blob/main/UNRELEASED.md) of the `dpm` repository.
+- The user-facing documentation, proposed in [canton-network/cf-docs#1463](https://github.com/canton-network/cf-docs/pull/1463).

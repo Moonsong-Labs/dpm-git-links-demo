@@ -9,7 +9,7 @@
 #
 # Run this:
 #
-#   dpm-dev add dar \
+#   dpm add dar \
 #     'https://github.com/canton-network/splice/blob/93b3519c7d50c0e0ddd0fcfa55529537bf6e643c/daml/dars/splice-amulet-0.1.19.dar' \
 #     --data-dependencies
 #

@@ -7,7 +7,7 @@
 # Reach for it when: the DAR you want is a release artifact rather than a file
 # checked into the tree. This is the common case for published Daml libraries.
 #
-# After `dpm-dev install package`, the line should stay a named release asset:
+# After `dpm install package`, the line should stay a named release asset:
 # there is no git ref to pin, so DPM should not rewrite it to a `#<sha>?path=`
 # form.
 
