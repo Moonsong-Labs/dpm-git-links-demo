@@ -1,0 +1,38 @@
+# The structured YAML mapping form
+#
+# What it shows: the same git dependency, spelled as keys instead of one packed
+# string. A file in the repository is `url`, `ref` and `path`. `url` is the
+# bare host and repository, with no `git:` prefix. A trailing `.git` is
+# accepted.
+#
+# Reach for it when: the one-liner is awkward to read or to generate, and you
+# would rather keep each part under its own key. It resolves the same way as
+# `git:<host>/<repo>#<ref>?path=<file>.dar`.
+#
+# These are the two DARs this demo builds against, both written as mappings.
+# The root `daml.yaml` writes Hello this way and leaves splice as a one-liner.
+# Structured YAML only works with SDK 3.6. An earlier `damlc` fails with
+# `expected String, but encountered Object`.
+#
+# After `dpm-dev install package`, a mapping stays a mapping. A branch or tag
+# in `ref` is rewritten to the commit SHA it pointed at; `url` and `path` stay.
+# It should print:
+#
+#   Resolving git dependency: fetching https://github.com/Moonsong-Labs/test-daml-hello @ "master" path "dist/test-daml-hello-sdk-3.6.0-lf-2.3.dar"
+#   Resolving git dependency: fetching https://github.com/canton-network/splice @ "release-line-0.6.8" path "daml/dars/splice-amulet-0.1.19.dar"
+#
+# A GitHub release asset uses `release` and `asset` instead of `ref` and `path`.
+# See `release-single-asset.yaml`. Splice publishes this DAR in the repository
+# tree, so the form that builds here is `ref` and `path`.
+
+dependencies:
+  - git:
+      url: github.com/Moonsong-Labs/test-daml-hello
+      ref: master
+      path: dist/test-daml-hello-sdk-3.6.0-lf-2.3.dar
+
+data-dependencies:
+  - git:
+      url: github.com/canton-network/splice
+      ref: release-line-0.6.8
+      path: daml/dars/splice-amulet-0.1.19.dar
