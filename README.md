@@ -22,21 +22,12 @@ Each line points at a `.dar` file sitting in two different Git repositories. One
 
 ## What you need
 
-- A `dpm` built from the `main` branch of [digital-asset/dpm](https://github.com/digital-asset/dpm).
-  Git links were merged in [digital-asset/dpm#311](https://github.com/digital-asset/dpm/pull/311)
-  but are not in a tagged release yet (the latest, 1.0.22, predates the merge):
-
-  ```bash
-  git clone https://github.com/digital-asset/dpm.git
-  cd dpm
-  go build -o bin/dpm ./cmd/dpm/
-  export PATH="$PWD/bin:$PATH"
-  ```
-
-  Building needs Go 1.26.6. The `export` puts this `dpm` first on your `PATH`
-  for the current shell, ahead of any released `dpm` you may already have,
-  which would not understand git links. You can also call the binary by the
-  full path, as `/path/to/dpm/bin/dpm`.
+- `dpm` 1.1.0 or later. Git dependencies ship in
+  [dpm 1.1.0](https://github.com/digital-asset/dpm/releases/tag/1.1.0), which
+  comes with Daml SDK 3.7. See the
+  [installation instructions](https://docs.canton.network/sdks-tools/cli-tools/dpm).
+  This demo pins SDK 3.5.2 in `daml.yaml`; `dpm install package` downloads it
+  the first time if you don't have it.
 - A Java 17 runtime. `dpm test` uses it to run the Daml Script tests.
 - Network access to `github.com` the first time, so DPM can fetch the DARs.
   After that they are cached under `~/.dpm/cache`.
@@ -151,6 +142,27 @@ dpm add dar \
 
 DPM will normalize the browser URL, and resolve the dependency as explained earlier.
 
+## Use it in your own project
+
+If your repository keeps copies of `.dar` files (a `dars/` or `splice-dars/`
+folder, for example), you can replace them with git dependencies:
+
+1. For each copied `.dar`, open it on GitHub, copy the link and pass it to
+   `dpm add dar`:
+
+   ```bash
+   dpm add dar 'https://github.com/<owner>/<repo>/blob/<ref>/<path>/<file>.dar' --data-dependencies
+   ```
+
+   DPM writes a `git:` line into `daml.yaml`, pinned to a commit.
+2. Delete the copied file and its old local path from `daml.yaml`.
+3. Run `dpm build` and `dpm test` to check that nothing changed.
+4. Commit the updated `daml.yaml`. Unlike in this demo, in your own project
+   you do want to commit the pinned file: that is what makes every build use
+   the same DAR.
+5. In CI, run `dpm update --check`. It confirms that every git dependency is
+   pinned to a commit and cached, without changing the project.
+
 ## Samples
 
 In the samples folder you'll find some handy ways of defining git dependencies, with a header explaining what you should expect.
@@ -250,8 +262,14 @@ dependencies from different SDK versions: 3.4.11, 3.5.2`.
 To re-resolve from scratch, delete `.daml/` for a clean build, and
 `~/.dpm/cache/git` as well if you want to force a fresh clone.
 
-## Technical specification and testing guide
+## Documentation and support
 
+- Official docs: the "dpm: Git-hosted DAR dependencies" section of the
+  [Canton 3.7.0 release notes](https://docs.canton.network/global-synchronizer/release-notes/canton-releases/3-7-0).
+  A full page is in review in
+  [canton-network/cf-docs#1463](https://github.com/canton-network/cf-docs/pull/1463).
+- The [dpm 1.1.0 release](https://github.com/digital-asset/dpm/releases/tag/1.1.0).
 - The [technical design and testing guide](https://moonsong-labs.github.io/dpm/) for git links.
-- The release note in [`UNRELEASED.md`](https://github.com/digital-asset/dpm/blob/main/UNRELEASED.md) of the `dpm` repository.
-- The user-facing documentation, proposed in [canton-network/cf-docs#1463](https://github.com/canton-network/cf-docs/pull/1463).
+- Found a bug in git dependencies? Open an issue on
+  [digital-asset/dpm](https://github.com/digital-asset/dpm/issues). For problems
+  with this demo, open an issue in this repository.
