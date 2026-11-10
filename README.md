@@ -8,7 +8,7 @@ The committed `daml.yaml` declares two git dependencies:
 ```yaml
 dependencies:
 
-  - git:github.com/Moonsong-Labs/test-daml-hello#master?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar
+  - git:github.com/Moonsong-Labs/test-daml-hello#master?path=dist/test-daml-hello-sdk-3.7.1-lf-2.3.dar
 
 data-dependencies:
   - git:github.com/canton-network/splice#release-line-0.6.8?path=daml/dars/splice-amulet-0.1.19.dar
@@ -26,8 +26,8 @@ Each line points at a `.dar` file sitting in two different Git repositories. One
   [dpm 1.1.0](https://github.com/digital-asset/dpm/releases/tag/1.1.0), which
   comes with Daml SDK 3.7. See the
   [installation instructions](https://docs.canton.network/sdks-tools/cli-tools/dpm).
-  This demo pins SDK 3.5.2 in `daml.yaml`; `dpm install package` downloads it
-  the first time if you don't have it.
+  This demo uses SDK 3.7.1; `dpm install package` downloads it if you don't
+  have it.
 - A Java 17 runtime. `dpm test` uses it to run the Daml Script tests.
 - Network access to `github.com` the first time, so DPM can fetch the DARs.
   After that they are cached under `~/.dpm/cache`.
@@ -43,9 +43,9 @@ dpm test
 `dpm install package` resolves both git dependencies and caches the DARs, you should see something like:
 
 ```
-SDK version 3.5.2 is already installed
-installing git dar "git:github.com/Moonsong-Labs/test-daml-hello#master?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar"...
-Resolving git dependency: fetching https://github.com/Moonsong-Labs/test-daml-hello @ "master" path "dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar"
+SDK version 3.7.1 is already installed
+installing git dar "git:github.com/Moonsong-Labs/test-daml-hello#master?path=dist/test-daml-hello-sdk-3.7.1-lf-2.3.dar"...
+Resolving git dependency: fetching https://github.com/Moonsong-Labs/test-daml-hello @ "master" path "dist/test-daml-hello-sdk-3.7.1-lf-2.3.dar"
 installing git dar "git:github.com/canton-network/splice#release-line-0.6.8?path=daml/dars/splice-amulet-0.1.19.dar"...
 Resolving git dependency: fetching https://github.com/canton-network/splice @ "release-line-0.6.8" path "daml/dars/splice-amulet-0.1.19.dar"
 No opt-in components to install
@@ -76,11 +76,10 @@ single-package demo and unrelated to git links, so `daml.yaml` silences it with
 `dpm test` runs the scripts in `daml/Tests.daml`:
 
 ```
-Test Summary
-
-daml/Main.daml:setup: ok, 1 active contracts, 1 transactions.
-daml/Tests.daml:testReword: ok, 1 active contracts, 2 transactions.
-daml/Tests.daml:testSetup: ok, 1 active contracts, 1 transactions.
+Running tests (dpm-git-links-demo) ...
+Test Summary (dpm-git-links-demo): 3 passed
+daml/Main.daml: 1 test passed
+daml/Tests.daml: 2 tests passed
 ```
 
 To prove the links are doing real work, delete either one from `daml.yaml` and
@@ -119,7 +118,7 @@ git:<host>/<repo>#<ref>?path=<path/inside/the/repo.dar>
   On other hosts, depend on a committed `.dar` with
   `#<ref>?path=` instead.
 
-Put it either under `dependencies` or `data-dependencies`. If you put it under the former, the package will need to match the SDK version of the demo app, which is 3.5.2.
+Put it either under `dependencies` or `data-dependencies`. If you put it under the former, the package will need to match the SDK version of the demo app, which is 3.7.1.
 
 For a GitHub release single asset, swap `#<ref>?path=` for a release query:
 
@@ -129,6 +128,22 @@ git:<host>/<repo>?release=<tag>&asset=<file>.dar
 
 For a GitHub release with all its assets, omit `&asset=`. DPM will expand the entry into one line per `.dar` attached to
 that release.
+
+### Structured mapping
+
+With SDK 3.6 or later, the same dependency can be written as a mapping instead
+of one string:
+
+```yaml
+data-dependencies:
+  - git:
+      url: github.com/canton-network/splice
+      ref: release-line-0.6.8
+      path: daml/dars/splice-amulet-0.1.19.dar
+```
+
+Pinning rewrites `ref` to the commit SHA and keeps the mapping. See
+[`samples/structured-yaml.yaml`](samples/structured-yaml.yaml).
 
 ### Git Raw links support 
 
@@ -175,6 +190,7 @@ not frozen in the samples.
 | [`browser-url-branch.yaml`](samples/browser-url-branch.yaml) | GitHub `raw` URL on a branch, via `dpm add dar` |
 | [`browser-url-commit.yaml`](samples/browser-url-commit.yaml) | GitHub `blob` URL at a commit SHA, via `dpm add dar` |
 | [`artifact-location-alias.yaml`](samples/artifact-location-alias.yaml) | Name the repo once under `artifact-locations`, use `@alias` |
+| [`structured-yaml.yaml`](samples/structured-yaml.yaml) | Structured mapping with `url`, `ref` and `path` (SDK 3.6 or later) |
 | [`release-single-asset.yaml`](samples/release-single-asset.yaml) | GitHub release, one named asset |
 | [`release-all-assets.yaml`](samples/release-all-assets.yaml) | GitHub release, no asset named: all 35 of them |
 
@@ -210,8 +226,8 @@ canonical line.
 Write a branch or a tag and DPM replaces it with the commit SHA that ref pointed at:
 
 ```
-- git:github.com/Moonsong-Labs/test-daml-hello#master?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar
-+ git:github.com/Moonsong-Labs/test-daml-hello#<sha>?path=dist/test-daml-hello-sdk-3.5.2-lf-2.2.dar
+- git:github.com/Moonsong-Labs/test-daml-hello#master?path=dist/test-daml-hello-sdk-3.7.1-lf-2.3.dar
++ git:github.com/Moonsong-Labs/test-daml-hello#<sha>?path=dist/test-daml-hello-sdk-3.7.1-lf-2.3.dar
 ```
 
 Both `dpm install` and `dpm add dar` do this. It is pinning, not
@@ -230,18 +246,19 @@ dependency "git:github.com/canton-network/splice#0.6.10?path=daml/dars/splice-am
 
 At least these two rules apply to every entry under `dependencies`:
 
-1. Daml-LF version must equal your build target. Point `dependencies` at
-   `test-daml-hello-sdk-3.5.2-lf-2.1.dar` and SDK 3.5.2 (which targets LF 2.2)
+1. Every DAR in the closure must have been built by the *same SDK version*,
+   yours included. Point `dependencies` at
+   `test-daml-hello-sdk-3.5.2-lf-2.2.dar` and the build stops with `Package
+   dependencies from different SDK versions: 3.5.2, 3.7.1`.
+2. Daml-LF version must equal your build target. SDK 3.7.1 targets LF 2.3, and
+   so does the Hello DAR. Add `build-options: [--target=2.2]` and the build
    fails with `Targeted LF version 2.2 but dependencies have different LF
-   versions`. You can add `build-options: [--target=2.1]` if you want to force your app to use this LF target for all packages. This project uses the LF 2.2 that comes with SDK 3.5.2, so no need to add a specific target.
-2. Every DAR in the closure must have been built by the *same SDK version*,
-   yours included, or you get `Package dependencies from different SDK
-   versions`.
+   versions`. This project uses the default target, so no need to set one.
 
-`splice-amulet` fails rule 2 in a way you cannot fix from your side. It
+`splice-amulet` fails rule 1 in a way you cannot fix from your side. It
 was built by SDK 3.4.11 and ships `daml-stdlib-3.4.11` inside its own closure,
-while this project is on 3.5.2, so the build stops with `Package
-dependencies from different SDK versions: 3.4.11, 3.5.2`.
+while this project is on 3.7.1, so the build stops with `Package
+dependencies from different SDK versions: 3.4.11, 3.7.1`.
 
 ## Troubleshooting
 
