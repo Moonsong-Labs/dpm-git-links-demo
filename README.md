@@ -27,7 +27,7 @@ Each line points at a `.dar` file sitting in two different Git repositories. One
   comes with Daml SDK 3.7. See the
   [installation instructions](https://docs.canton.network/sdks-tools/cli-tools/dpm).
   This demo uses SDK 3.7.1; `dpm install package` downloads it if you don't
-  have it.
+  have it. Last verified with dpm 1.1.2.
 - A Java 17 runtime. `dpm test` uses it to run the Daml Script tests.
 - Network access to `github.com` the first time, so DPM can fetch the DARs.
   After that they are cached under `~/.dpm/cache`.
@@ -281,10 +281,12 @@ To re-resolve from scratch, delete `.daml/` for a clean build, and
 
 ## Documentation and support
 
-- Official docs: the "dpm: Git-hosted DAR dependencies" section of the
+- Official docs: [Git DARs](https://docs.canton.network/appdev/modules/m5-environment-configuration#git-dars)
+  in the Canton Network docs, and the "dpm: Git-hosted DAR dependencies"
+  section of the
   [Canton 3.7.0 release notes](https://docs.canton.network/global-synchronizer/release-notes/canton-releases/3-7-0).
-  A full page is in review in
-  [canton-network/cf-docs#1463](https://github.com/canton-network/cf-docs/pull/1463).
+- Questions and feedback: the
+  [forum thread](https://forum.canton.network/t/9526).
 - The [dpm 1.1.0 release](https://github.com/digital-asset/dpm/releases/tag/1.1.0).
 - The [technical design and testing guide](https://moonsong-labs.github.io/dpm/) for git links.
 - Found a bug in git dependencies? Open an issue on
